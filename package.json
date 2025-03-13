@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dockerfile-con-web-framework": "file:",
     "express": "^4.21.2"
   }
 }

@@ -9,19 +9,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Verificando si Docker está corriendo...'
-                bat '''
-                    @echo off
-                    tasklist /FI "IMAGENAME eq dockerd.exe" | find /I "dockerd.exe" >nul
-                    if errorlevel 1 (
-                        echo Docker no está corriendo. Intentando iniciarlo...
-                        start "" "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"
-                        timeout /t 15
-                    ) else (
-                        echo Docker ya está corriendo.
-                    )
-                '''
-
                 echo 'Construyendo la imagen Docker...'
                 bat """
                     docker build -t %CONTAINER_NAME% .

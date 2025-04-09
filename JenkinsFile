@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'sicei'
+        CONTAINER_NAME= "${IMAGE_NAME}:${BUILD_ID}"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Verificando si Docker está corriendo...'
+                bat '''
+                    @echo off
+                    tasklist /FI "IMAGENAME eq dockerd.exe" | find /I "dockerd.exe" >nul
+                    if errorlevel 1 (
+                        echo Docker no está corriendo. Intentando iniciarlo...
+                        start "" "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"
+                        timeout /t 15
+                    ) else (
+                        echo Docker ya está corriendo.
+                    )
+                '''
+
+                echo 'Construyendo la imagen Docker...'
+                bat """
+                    docker build -t %CONTAINER_NAME% .
+                """
+            }
+        }
+
+        
+
+        stage('Deploy') {
+            steps {
+                echo 'Desplegando la aplicación...'
+                bat """
+                    for /f "tokens=*" %%i in ('docker ps -aq -f name=%IMAGE_NAME%') do (
+                        docker stop %%i || echo No se pudo detener el contenedor
+                        docker rm -f %%i || echo No se pudo eliminar el contenedor
+                    )
+
+                    echo Ejecutando nuevo contenedor...
+                    docker run -d -p 3000:3000 --name "%IMAGE_NAME%" "%CONTAINER_NAME%"
+                """
+                echo "Despliegue exitoso."
+            }
+        }
+    }
+}

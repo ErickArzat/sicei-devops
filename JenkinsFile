@@ -20,7 +20,7 @@ pipeline {
             steps {
                 echo 'Desplegando la aplicación...'
                 bat """
-                    for /F "tokens=*" %%i in ('docker ps -aq -f "name=sicei"') do (
+                    for /F "tokens=*" %%i in ('docker ps -aq -f "name=siceidevops"') do (
                         docker stop %%i || echo No se pudo detener el contenedor
                         docker rm -f %%i || echo No se pudo eliminar el contenedor
                     )
@@ -33,3 +33,5 @@ pipeline {
         }
     }
 }
+
+

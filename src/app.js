@@ -1,12 +1,18 @@
-const express = require("express");
+import express from 'express';
+import bodyParser from 'body-parser';
+
 const app = express();
 
+
 // Importar rutas
-const alumnosRoutes = require("./routes/alumnos.routes");
-const profesoresRoutes = require("./routes/profesores.routes");
+import alumnosRoutes from './routes/alumnos.routes.js';
+import profesoresRoutes from './routes/profesores.routes.js';
 
 // Usar rutas
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use("/alumnos", alumnosRoutes);
 app.use("/profesores", profesoresRoutes);
 
-module.exports = app;
+export default app;

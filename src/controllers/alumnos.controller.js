@@ -1,65 +1,61 @@
-import { 
-  getAllAlumnos, 
-  getAlumnoById as serviceGetAlumnoById,
-  createAlumno as serviceSaveAlumno,
-  updateAlumno as serviceUpdateAlumno,
-  deleteAlumno as serviceDeleteAlumno
-} from '../services/alumnos.service.js';
+import alumnosService from "../services/alumnos.service.js";
 
-const getAlumnos = async (req, res) => {
-  const alumnos = await getAllAlumnos();
-  return res.json(alumnos);
-};
+class AlumnosController {
+  async getAlumnos(req, res) {
+    const alumnos = await alumnosService.getAllAlumnos();
+    res.json(alumnos);
+  }
 
-const getAlumnoById = async (req, res) => {
-  const id = req.alumnoId;
+  async getUser(req, res) {
+    const alumno = await alumnosService.getAlumnoById(req.params.id);
 
-  try {
-    const alumno = await serviceGetAlumnoById(id);
-    return res.json(alumno);
-  } catch (error) {
-    return res.status(404).json({ status: 'error', message: error.message });
+    if (!alumno) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json(alumno);
+  }
+
+  async createAlumno(req, res) {
+    const alumno = await alumnosService.createAlumno(req.body);
+    res.status(201).json(alumno);
+  }
+
+  async updateAlumno(req, res) {
+    const { id } = req.params;
+
+    const updated = await alumnosService.updateAlumno(id, req.body);
+
+    if (updated[0] === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Usuario actualizado correctamente" });
+  }
+
+  async deleteAlumno(req, res) {
+    const { id } = req.params;
+
+    const deleted = await alumnosService.deleteAlumno(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Usuario eliminado correctamente" });
+  }
+
+  // Imagen: solo crear/subir
+  async uploadImage(req, res) {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ error: "No file provided" });
+    }
+
+    const url = await alumnosService.uploadProfileImage(file, req.params.id);
+    res.json({ imagenUrl: url });
   }
 }
 
-const createAlumno = async (req, res) => {
-  const alumnoData = req.alumnos;
-
-  try {
-    const alumno = await serviceSaveAlumno(alumnoData);
-    return res.status(201).json(alumnoData);
-  }catch (error) {
-    return res.status(400).json({ status: 'error', message: error.message });
-  }
-  
-};
-
-const updateAlumno = async (req, res) => {
-  const id = req.alumnoId;
-  const alumnoData = req.alumno;
-  try {
-    const updatedAlumno = await serviceUpdateAlumno(id, alumnoData);
-    return res.json(alumnoData);
-  } catch (error) {
-    return res.status(404).json({ status: 'error', message: error.message });
-  }
-};
-
-const deleteAlumno = async (req, res) => {
-  const id = req.alumnoId;
-  
-  try {
-    const deletedAlumno = await serviceDeleteAlumno(id);
-    return res.json(deletedAlumno);
-  }catch (error) {
-    return res.status(404).json({ status: 'error', message: error.message });
-  }
-};
-
-export {
-    getAlumnos,
-    getAlumnoById,
-    createAlumno,
-    updateAlumno,
-    deleteAlumno
-};
+export default new AlumnosController();

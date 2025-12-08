@@ -1,23 +1,25 @@
 import joi from 'joi';
 
 const alumnoSchema = joi.object({
-    id: joi.number().integer().required().disallow(null),
     nombres: joi.string().required().disallow(null),
     apellidos: joi.string().required().disallow(null),
     matricula: joi.string().required().disallow(null),
-    promedio: joi.number().required().disallow(null)
+    promedio: joi.number().required().disallow(null),
+    password: joi.string().required().disallow(null),
+    fotoPerfilUrl: joi.string().uri().disallow(null)
 });
 
 const alumnoid = joi.object({
-    id: joi.number().integer().required()
+    id: joi.string().uuid().required()
 });
 
 const alumnoUpdateSchema = joi.object({
-    id: joi.number().integer().disallow(null),
     nombres: joi.string().disallow(null),
     apellidos: joi.string().disallow(null),
     matricula: joi.string().disallow(null),
-    promedio: joi.number().disallow(null)
+    promedio: joi.number().disallow(null),
+    password: joi.string().disallow(null),
+    fotoPerfilUrl: joi.string().uri().disallow(null)
 });
 
 export const validateAlumno = (req, res, next) => {

@@ -1,47 +1,33 @@
-let alumnos = [];
+import { alumnoRepository } from "../repositories/alumnos.repository.js";
+import { uploadImageToS3 } from "./s3.service.js";
 
-async function getAllAlumnos() {
-    return alumnos;
-}
-async function getAlumnoById(id) {
-    const alumno = alumnos.find(alumno => alumno.id === id);
-    if (!alumno) {
-        throw new Error('Alumno not found');
-    }
-    return alumno;
-}
+class AlumnosService {
+  async getAllAlumnos() {
+    return await alumnoRepository.findAll();
+  }
 
-async function createAlumno(alumno) {
-    const exists = alumnos.some(a => a.id === alumno.id);
-    if (exists) {
-        throw new Error('Alumno with this ID already exists');
-    }
-    alumnos.push(alumno);
-    return alumno;
-}
+  async getAlumnoById(id) {
+    return await alumnoRepository.findById(id);
+  }
 
-async function updateAlumno(id, alumnoData) {
-    const index = alumnos.findIndex(alumno => alumno.id === id);
-    if (index === -1) {
-        throw new Error('Alumno not found');
-    }   
-    alumnos[index] = { ...alumnos[index], ...alumnoData };
-    return alumnos[index];
-}
+  async createAlumno(data) {
+    return await alumnoRepository.create(data);
+  }
 
-async function deleteAlumno(id) {
-    const index = alumnos.findIndex(alumno => alumno.id === id);
-    if (index === -1) {
-        throw new Error('Alumno not found');
-    }
-    const deletedAlumno = alumnos.splice(index, 1);
-    return deletedAlumno[0];
+  async updateAlumno(id, data) {
+    return await alumnoRepository.update(id, data);
+  }
+
+  async deleteAlumno(id) {
+    return await alumnoRepository.delete(id);
+  }
+
+  // Imagen: solo crear/subir (no actualizar)
+  async uploadProfileImage(file, userId) {
+    const imageUrl = await uploadImageToS3(file.buffer, file.mimetype);
+    await alumnoRepository.updateImage(userId, imageUrl);
+    return imageUrl;
+  }
 }
 
-export {
-    getAllAlumnos,
-    getAlumnoById,
-    createAlumno,
-    updateAlumno,
-    deleteAlumno
-};
+export default new AlumnosService();

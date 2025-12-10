@@ -1,16 +1,37 @@
 {
   "name": "dockerfile-con-web-framework",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:migrate": "sequelize-cli db:migrate --config sequelize.config.js --env development",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo --config sequelize.config.js --env development",
+    "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all --config sequelize.config.js --env development"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.946.0",
+    "@aws-sdk/client-s3": "^3.946.0",
+    "@aws-sdk/client-sns": "^3.947.0",
+    "@aws-sdk/lib-dynamodb": "^3.946.0",
+    "body-parser": "^2.2.0",
     "dockerfile-con-web-framework": "file:",
-    "express": "^4.21.2"
+    "dotenv": "^17.2.3",
+    "dynamoose": "^4.0.4",
+    "express": "^4.21.2",
+    "import": "^0.0.6",
+    "joi": "^18.0.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "sequelize": "^6.37.7",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3"
   }
 }
